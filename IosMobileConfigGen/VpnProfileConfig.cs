@@ -33,10 +33,20 @@ public record VpnProfileConfig
     public bool SendAllTraffic { get; init; } = true;
     
     [JsonPropertyName("onDemand")]
-    public bool OnDemand { get; init; } = true;
+    public OnDemandConfig? OnDemand { get; init; }
     
     [JsonPropertyName("output")]
     public string Output { get; init; } = "vpn.mobileconfig";
+}
+
+public record OnDemandConfig
+{
+    [JsonPropertyName("mode")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public OnDemandMode Mode { get; init; } = OnDemandMode.WiFiAndCellular;
+
+    [JsonPropertyName("onDemandMode")] 
+    public string[] ExcludedSsids { get; init; } = [];
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
