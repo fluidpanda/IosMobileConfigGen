@@ -5,12 +5,12 @@ namespace IosMobileConfigGen;
 /// <summary>
 /// Builds an Apple Configuration Profile dictionary tree for l2tp/ipsec VPN.
 /// </summary>
-public class VpnProfileBuilder
+public static class VpnProfileBuilder
 {
     public static Dictionary<string, object> Build(VpnProfileConfig config)
     {
-        string vpnPayloadUuid = Guid.NewGuid().ToString().ToUpperInvariant();
-        Dictionary<string, object> vpnPayload = BuildVpnPayload(config, vpnPayloadUuid);
+        var vpnPayloadUuid = Guid.NewGuid().ToString().ToUpperInvariant();
+        var vpnPayload = BuildVpnPayload(config, vpnPayloadUuid);
 
         return new Dictionary<string, object>
         {
