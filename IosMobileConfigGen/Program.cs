@@ -27,3 +27,9 @@ var json = JsonSerializer.Serialize(config, jsonOptions);
 Console.WriteLine("json config");
 Console.WriteLine(json);
 Console.WriteLine();
+
+var profile = VpnProfileBuilder.Build(config);
+PlistWriter.Write(profile, config.Output);
+
+Console.WriteLine($"profile output: {config.Output}");
+Console.WriteLine(File.ReadAllText(config.Output));
