@@ -7,7 +7,7 @@ namespace IosMobileConfigGen;
 /// </summary>
 public class VpnProfileBuilder
 {
-    public Dictionary<string, object> Build(VpnProfileConfig config)
+    public static Dictionary<string, object> Build(VpnProfileConfig config)
     {
         string vpnPayloadUuid = Guid.NewGuid().ToString().ToUpperInvariant();
         Dictionary<string, object> vpnPayload = BuildVpnPayload(config, vpnPayloadUuid);
@@ -25,7 +25,7 @@ public class VpnProfileBuilder
         };
     }
 
-    public Dictionary<string, object> BuildVpnPayload(VpnProfileConfig config, string payloadUuid)
+    private static Dictionary<string, object> BuildVpnPayload(VpnProfileConfig config, string payloadUuid)
     {
         var payload = new Dictionary<string, object>
         {
@@ -59,7 +59,7 @@ public class VpnProfileBuilder
         return payload;
     }
 
-    public Dictionary<string, object> BuildPppPayload(VpnProfileConfig config)
+    private static Dictionary<string, object> BuildPppPayload(VpnProfileConfig config)
     {
         var ppp = new Dictionary<string, object>
         {
@@ -74,7 +74,7 @@ public class VpnProfileBuilder
         return ppp;
     }
 
-    public List<object> BuildOnDemandRules(OnDemandConfig onDemand)
+    private static List<object> BuildOnDemandRules(OnDemandConfig onDemand)
     {
         var rules = new List<object>();
         
@@ -85,7 +85,7 @@ public class VpnProfileBuilder
             {
                 ["Action"] = "Disconnect",
                 ["InterfaceTypeMatch"] = "WiFi",
-                ["SSIDMatch"] = new List<object>(onDemand.ExcludedSsids.Cast<object>()),
+                ["SSIDMatch"] = new List<object>(onDemand.ExcludedSsids),
             });
         }
         
