@@ -4,7 +4,7 @@ namespace IosMobileConfigGen;
 
 /// <summary>
 /// Root configuration for VPN profile generation.
-/// Deserializable from JSON config file or constructable from cli arguments.
+/// Deserializable from JSON config file TODO: or constructable from cli arguments.
 /// </summary>
 public record VpnProfileConfig
 {
@@ -42,14 +42,12 @@ public record VpnProfileConfig
 public record OnDemandConfig
 {
     [JsonPropertyName("mode")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public OnDemandMode Mode { get; init; } = OnDemandMode.WiFiAndCellular;
 
-    [JsonPropertyName("onDemandMode")] 
+    [JsonPropertyName("excludedSsids")] 
     public string[] ExcludedSsids { get; init; } = [];
 }
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum OnDemandMode
 {
     Disabled, // no auto-connect
