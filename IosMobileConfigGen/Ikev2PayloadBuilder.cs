@@ -15,6 +15,7 @@ public class Ikev2PayloadBuilder : IVpnPayloadBuilder
                 ["RemoteAddress"] = config.Server,
                 ["RemoteIdentifier"] = config.Server,
                 ["LocalIdentifier"] = config.UserName,
+                ["LocalIdentifierType"] = "FQDN",
                 // disabled for IKEv2 with PSK only, no EAP:
                 // ["AuthName"] = config.UserName,
                 // ["AuthPassword"] = config.Password ?? "",
@@ -37,7 +38,7 @@ public class Ikev2PayloadBuilder : IVpnPayloadBuilder
             {
                 ["OverridePrimary"] = config.SendAllTraffic ? 1 : 0
             },
-            ["PayloadDescription"] = $"{config.Organization} IKEv2 VPN profile.",
+            ["PayloadDescription"] = $"{config.Organization} IKEv2 VPN profile",
             ["PayloadDisplayName"] = config.Name,
             ["PayloadIdentifier"] = $"com.apple.vpn.managed.{payloadUuid}",
             ["PayloadOrganization"] = config.Organization,
