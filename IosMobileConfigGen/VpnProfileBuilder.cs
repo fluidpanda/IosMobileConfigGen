@@ -9,8 +9,14 @@ public static class VpnProfileBuilder
 {
     public static Dictionary<string, object> Build(VpnProfileConfig config)
     {
-        var vpnPayloadUuid = Guid.NewGuid().ToString().ToUpperInvariant();
-        var vpnPayload = BuildVpnPayload(config, vpnPayloadUuid);
+        var payloadBuilder = CreatePayloadBuilder(config.VpnType?.Type ?? VpnType.L2TP);
+        var payloadUuid = Guid.NewGuid().ToString().ToUpperInvariant();
+        var vpnPayload = payloadBuilder.Build(config, payloadUuid);
+        if (config.OnDemand is { Mode: not OnDemandMode.Disabled } onDemand)
+        {
+            vpnPayload["OnDemandEnabled"] = 1;
+            vpnPayload["OnDemandRules"] = BuildOnDemandRules(onDemand);
+        }
         return new Dictionary<string, object>
         {
             ["PayloadContent"] = new List<object> { vpnPayload },
@@ -24,51 +30,12 @@ public static class VpnProfileBuilder
         };
     }
 
-    private static Dictionary<string, object> BuildVpnPayload(VpnProfileConfig config, string payloadUuid)
+    private static IVpnPayloadBuilder CreatePayloadBuilder(VpnType type) => type switch
     {
-        var payload = new Dictionary<string, object>
-        {
-            ["IPSec"] = new Dictionary<string, object>
-            {
-                ["AuthenticationMethod"] = "SharedSecret",
-                ["LocalIdentifierType"] = "KeyID",
-                ["SharedSecret"] = Encoding.UTF8.GetBytes(config.SharedSecret),
-            },
-            ["IPv4"] = new Dictionary<string, object>
-            {
-                ["OverridePrimary"] = config.SendAllTraffic ? 1 : 0
-            },
-            ["PPP"] = BuildPppPayload(config),
-            ["PayloadDescription"] = $"{config.Organization} L2TP/IPSec VPN profile.",
-            ["PayloadDisplayName"] = config.Name,
-            ["PayloadIdentifier"] = $"com.apple.vpn.managed.{payloadUuid}",
-            ["PayloadOrganization"] = config.Organization,
-            ["PayloadType"] = "com.apple.vpn.managed",
-            ["PayloadUUID"] = payloadUuid,
-            ["PayloadVersion"] = 1,
-            ["UserDefinedName"] = config.Name,
-            ["VPNType"] = "L2TP",
-        };
-        if (config.OnDemand is { Mode: not OnDemandMode.Disabled } onDemand)
-        {
-            payload["OnDemandEnabled"] = 1;
-            payload["OnDemandRules"] = BuildOnDemandRules(onDemand);
-        }
-        return payload;
-    }
-
-    private static Dictionary<string, object> BuildPppPayload(VpnProfileConfig config)
-    {
-        var ppp = new Dictionary<string, object>
-        {
-            ["AuthName"] = config.UserName,
-            ["CommRemoteAddress"] = config.Server,
-        };
-        // password is optional - if omitted, the device prompts on each connect:
-        if (!string.IsNullOrEmpty(config.Password))
-            ppp["AuthPassword"] = config.Password;
-        return ppp;
-    }
+        VpnType.L2TP => new L2tpPayloadBuilder(),
+        VpnType.IKEv2 => new Ikev2PayloadBuilder(),
+        _ => throw new ArgumentOutOfRangeException(nameof(type), $"Unsupported VPN type: {type}")
+    };
 
     private static List<object> BuildOnDemandRules(OnDemandConfig onDemand)
     {

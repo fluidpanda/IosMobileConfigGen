@@ -8,6 +8,9 @@ namespace IosMobileConfigGen;
 /// </summary>
 public record VpnProfileConfig
 {
+    [JsonPropertyName("vpn")]
+    public VpnTypeConfig? VpnType  { get; init; }
+    
     [JsonPropertyName("name")] 
     public required string Name { get; init; }
     
@@ -53,4 +56,16 @@ public enum OnDemandMode
     Disabled, // no auto-connect
     WiFiOnly, // only on wifi, disconnect on cellular
     WiFiAndCellular  // auto-connect on wifi and cellular 
+}
+
+public record VpnTypeConfig
+{
+    [JsonPropertyName("type")] 
+    public VpnType Type { get; init; } = VpnType.L2TP;
+}
+
+public enum VpnType
+{
+    L2TP,
+    IKEv2
 }

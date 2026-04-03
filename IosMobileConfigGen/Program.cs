@@ -84,6 +84,10 @@ internal static class Program
         const string path = "vpn-config.json";
         var example = new VpnProfileConfig
         {
+            VpnType = new VpnTypeConfig
+            {
+                Type = VpnType.L2TP
+            },
             Name = "VPN Profile",
             Server = "vpn.example.com",
             UserName = "username",
