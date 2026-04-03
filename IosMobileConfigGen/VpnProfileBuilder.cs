@@ -3,7 +3,7 @@
 namespace IosMobileConfigGen;
 
 /// <summary>
-/// Builds an Apple Configuration Profile dictionary tree for l2tp/ipsec VPN.
+/// Builds an Apple Configuration Profile dictionary tree for L2TP/IPSec VPN.
 /// </summary>
 public static class VpnProfileBuilder
 {
@@ -11,7 +11,6 @@ public static class VpnProfileBuilder
     {
         var vpnPayloadUuid = Guid.NewGuid().ToString().ToUpperInvariant();
         var vpnPayload = BuildVpnPayload(config, vpnPayloadUuid);
-
         return new Dictionary<string, object>
         {
             ["PayloadContent"] = new List<object> { vpnPayload },
@@ -55,7 +54,6 @@ public static class VpnProfileBuilder
             payload["OnDemandEnabled"] = 1;
             payload["OnDemandRules"] = BuildOnDemandRules(onDemand);
         }
-
         return payload;
     }
 
@@ -66,19 +64,16 @@ public static class VpnProfileBuilder
             ["AuthName"] = config.UserName,
             ["CommRemoteAddress"] = config.Server,
         };
-        
-        // password is optional - if omitted, the device prompts on each connect
+        // password is optional - if omitted, the device prompts on each connect:
         if (!string.IsNullOrEmpty(config.Password))
             ppp["AuthPassword"] = config.Password;
-
         return ppp;
     }
 
     private static List<object> BuildOnDemandRules(OnDemandConfig onDemand)
     {
         var rules = new List<object>();
-        
-        // disconnect when connected to an excluded SSID
+        // disconnect when connected to an excluded SSID:
         if (onDemand.ExcludedSsids.Length > 0)
         {
             rules.Add(new Dictionary<string, object>
@@ -88,27 +83,23 @@ public static class VpnProfileBuilder
                 ["SSIDMatch"] = new List<object>(onDemand.ExcludedSsids),
             });
         }
-        
-        // connect on any other wifi networks
+        // connect on any other Wi-Fi networks:
         rules.Add(new Dictionary<string, object>
         {
             ["Action"] = "Connect",
             ["InterfaceTypeMatch"] = "WiFi",
         });
-        
-        // cellular connect
+        // cellular connect:
         rules.Add(new Dictionary<string, object>
         {
             ["Action"] = onDemand.Mode == OnDemandMode.WiFiAndCellular ? "Connect" : "Disconnect",
             ["InterfaceTypeMatch"] = "Cellular",
         });
-        
-        // fallback
+        // fallback:
         rules.Add(new Dictionary<string, object>
         {
             ["Action"] = onDemand.Mode == OnDemandMode.WiFiAndCellular ? "Connect" : "Disconnect",
         });
-        
         return rules;
     }
 }
