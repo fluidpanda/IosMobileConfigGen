@@ -13,7 +13,7 @@ internal static class Program
         }
         if (HasFlag(args, "--init"))
         {
-            return GenerateExampleConfig();
+            return GenerateExampleConfig(args);
         }
         try
         {
@@ -77,32 +77,65 @@ internal static class Program
             throw new ArgumentException("Shared secret field cannot be empty.");
     }
 
-    private static int GenerateExampleConfig()
+    private static int GenerateExampleConfig(string[] args)
     {
-        const string path = "vpn-config.json";
-        var example = new VpnProfileConfig
+        var typeStr = GetValue(args, "--init");
+        if (typeStr is null)
         {
-            VpnType = new VpnTypeConfig
-            {
-                Type = VpnType.L2TP
-            },
-            Name = "VPN Profile",
-            Server = "vpn.example.com",
-            UserName = "username",
-            Password = "password",
-            SharedSecret = "presharedkey",
-            Organization = "Some Organization",
-            Identifier = "com.domain.vpn",
-            SendAllTraffic = true,
-            OnDemand = new OnDemandConfig
-            {
-                Mode = OnDemandMode.WiFiAndCellular,
-                ExcludedSsids = ["WiFiSSID_1", "WiFiSSID_2"]
-            },
-            Output = "vpn.mobileconfig"
+            Console.Error.WriteLine("Specify VPN type: --init l2tp, --init ikev2");
+            return 1;
+        }
+
+        var (config, filename) = typeStr.ToLowerInvariant() switch
+        {
+            "l2tp" => (Buildl2tpExample(), "vpn-l2tp.json"),
+            "ikev2" => (BuildIkev2Example(), "vpn-ikev2.json"),
+            _ => throw new ArgumentException($"Unknown VPN type `{typeStr}`, use: l2tp or ikev2")
         };
-        var json = JsonSerializer.Serialize(example, AppJsonContext.Default.VpnProfileConfig);
-        File.WriteAllText(path, json + "\n");
+        var json = JsonSerializer.Serialize(config, AppJsonContext.Default.VpnProfileConfig);
+        File.WriteAllText(filename, json + "\n");
+        Console.WriteLine($"Config created: {filename}");
         return 0;
     }
+
+    private static VpnProfileConfig Buildl2tpExample() => new()
+    {
+        VpnType = new VpnTypeConfig
+        {
+            Type = VpnType.L2TP,
+        },
+        Name = "L2TP/IPSec VPN Profile",
+        Server = "l2tp.domain.com",
+        UserName = "username",
+        Password = "password",
+        SharedSecret = "presharedkey",
+        Organization = "Some Organization",
+        Identifier = "com.domain.l2tp",
+        SendAllTraffic = true,
+        OnDemand =  new OnDemandConfig
+        {
+            Mode = OnDemandMode.WiFiAndCellular,
+            ExcludedSsids = ["SSID_1", "SSID_2"],
+        }
+    };
+
+    private static VpnProfileConfig BuildIkev2Example() => new()
+    {
+        VpnType = new VpnTypeConfig
+        {
+            Type = VpnType.IKEv2,
+        },
+        Name = "IKEv2 VPN Profile",
+        Server = "ikev2.domain.com",
+        UserName = "username",
+        Password = null,
+        SharedSecret = "presharedkey",
+        Organization = "Some Organization",
+        SendAllTraffic = true,
+        OnDemand = new OnDemandConfig
+        {
+            Mode = OnDemandMode.WiFiAndCellular,
+            ExcludedSsids = ["SSID_1", "SSID_2"],
+        }
+    };
 }
