@@ -4,8 +4,6 @@ namespace IosMobileConfigGen;
 
 internal static class Program
 {
-    private static readonly JsonSerializerOptions JsonOptions = AppJsonContext.Default.Options;
-
     private static int Main(string[] args)
     {
         if (args.Length == 0)
