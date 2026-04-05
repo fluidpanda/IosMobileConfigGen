@@ -4,7 +4,7 @@ namespace IosMobileConfigGen;
 
 /// <summary>
 /// Root configuration for VPN profile generation.
-/// Deserializable from JSON config file TODO: or constructable from cli arguments.
+/// Deserializable from JSON config file
 /// </summary>
 public record VpnProfileConfig
 {
