@@ -1,8 +1,7 @@
 ﻿<component name="ProjectRunConfigurationManager">
   <configuration default="false" name="IosMobileConfigGen" type="DotNetFolderPublish" factoryName="Publish to folder">
-    <riderPublish configuration="Release" platform="Any CPU" produce_single_file="true" self_contained="true" target_folder="$PROJECT_DIR$/IosMobileConfigGen/bin/Release/net10.0/publish" target_framework="net10.0" trim_unused_assemblies="true" uuid_high="-7670505682446169267" uuid_low="-7612746831063286648">
+    <riderPublish configuration="Release" delete_existing_files="true" platform="Any CPU" produce_single_file="true" self_contained="true" target_folder="$PROJECT_DIR$/IosMobileConfigGen/bin/Release/net10.0" target_framework="net10.0" trim_unused_assemblies="true" uuid_high="-7670505682446169267" uuid_low="-7612746831063286648">
       <runtimes>
-        <item value="win-x64" />
         <item value="linux-x64" />
       </runtimes>
     </riderPublish>
