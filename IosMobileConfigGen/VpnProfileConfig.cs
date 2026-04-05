@@ -4,7 +4,7 @@ namespace IosMobileConfigGen;
 
 /// <summary>
 /// Root configuration for VPN profile generation.
-/// Deserializable from JSON config file
+/// Deserializable from JSON config file.
 /// </summary>
 public record VpnProfileConfig
 {
@@ -54,8 +54,8 @@ public record OnDemandConfig
 public enum OnDemandMode
 {
     Disabled, // no auto-connect
-    WiFiOnly, // only on wifi, disconnect on cellular
-    WiFiAndCellular  // auto-connect on wifi and cellular 
+    WiFiOnly, // only on Wi-Fi, disconnect on cellular
+    WiFiAndCellular  // auto-connect on Wi-Fi and cellular 
 }
 
 public record VpnTypeConfig
